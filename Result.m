@@ -121,7 +121,9 @@ grid on
 
 % Note
     % more specific with each condition, percentage relative frequency
+
 % 2.2 PressedKey - Inferential Statistics 
+
 % Logistic Regression
 
 % Logistic Regression
@@ -134,12 +136,14 @@ grid on
 %modelspec = 'PressedKey ~ Condition + Gender + AgeGroup' ;
 modelspec = ['PressedKey ~ (StemMood * Condition) + StemFreq + Gender + AgeGroup + HourSpent + Hand'] ;
 mdl = fitglm(resultTable,modelspec,'Distribution','binomial')
+                
 % Mixied-Effect Logistic Regression
 
 % mixed-effect Logistic regression
 
 mdlN = fitglme(resultTable, ['PressedKey ~ (StemMood * Condition) + StemFreq + Gender + AgeGroup + HourSpent + Hand' ...
     '+ (1|PartID) + (1|ItemID) + (1+StemFreq|ItemID)'], 'Distribution','Binomial')
+                
 %% 3 Dependent Variable - ReactionTime 
 % 3.1 ReactionTime  - Descriptive Statistics
 %% 
@@ -158,21 +162,36 @@ tbl = struct2table(T);
 
 % Data Summary: Median
 rtMedian0 = groupsummary(tbl, 'Condition','median', 'ReactionTime')
-% Box Plot - Reaction Time of Pressing "J" on Each Condition
+% Violin Plot - Reaction Time of Pressing "J" on Each Condition
 
 % Data Visualization
 
-%figure;
-%boxchart(categorical(x1), y, "Notch","on")
-%ylabel("Reaction time (ms)")
-%ylim([500 5500])
-%gtitle('Box Chart of Reaction Time Answering No (Press 0) on Each Condition')
-figure;
-boxchart(categorical(tbl.Condition), tbl.ReactionTime, "Notch","on")
+%violinplot
+figure; hold on;
+% plot a swarm plot
+s = swarmchart(categorical(tbl.Condition), tbl.ReactionTime);
+s.MarkerEdgeAlpha = 0.5; % set transparency of scatter points
+% plot a box plot on top
+b = boxchart(categorical(tbl.Condition), tbl.ReactionTime, "Notch","on");
+b.BoxFaceColor = 'k'; % set color of box
+b.BoxFaceAlpha = 0.4; % set transparency of box
+b.BoxWidth = 0.2; % set box width
+b.WhiskerLineColor = 'k'; % set whisker line color
+b.MarkerStyle = '*'; % set outlier symbols
+b.MarkerColor = 'k'; % set outlier symbol color
 ylabel("Reaction time (ms)")
 ylim([50 5500])
-title('Box Chart of Reaction Time of Pressing "J" on Each Condition')
+title('Violin plot of Reaction Time of Pressing "J" on Each Condition')
+%set(gca,'FontSize',16); % set font size
 grid on
+                
+%figure;
+%boxchart(categorical(tbl.Condition), tbl.ReactionTime, "Notch","on")
+%ylabel("Reaction time (ms)")
+%ylim([50 5500])
+%title('Box Chart of Reaction Time of Pressing "J" on Each Condition')
+%grid on
+
 % 3.2 ReactionTime  - Inferential Statistics
 % Linear Regression
 
