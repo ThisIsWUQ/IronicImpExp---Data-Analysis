@@ -90,15 +90,7 @@ for i = 1:height(uniqCond) % i means each Condition
     SumOfF(i) = sum(key); % summation of 1 in the variable 'total' shows counts of Key-'F' pressed
     Press1(i) = (SumOfF(i)/Total(i))*100; % store in the array 'Press1' the percentage count of Key 'F' pressed
     Press0(i) = ((Total(i) - SumOfF(i))/Total(i))*100; % store in the array 'Press0' the percentage count of Key 'J' pressed
-end
-
-%for i = 1:height(uniqCond) % i means each Condition
-%    key = resultTable.PressedKey(strcmp(resultTable.Condition, uniqCond{i})); % logical indexing both keys pressed on each condition
-%    total = length(key); storeTotal(i) = total; % storing a total number of both pressed keys per condition
-%    P1 = sum(key); storeSumOfF(i) = P1; % summation of 1 in the variable 'total' shows counts of Key-'F' pressed
-%    Press1(i) = (P1/total)*100; % store in the array 'Press1' the percentage count of Key 'F' pressed
-%    Press0(i) = ((total - P1)/total)*100; % store in the array 'Press0' the percentage count of Key 'J' pressed
-%end    
+end  
 
 % Sorting the result
 X = categorical(uniqCond');
@@ -133,7 +125,6 @@ grid on
     % compare: emoji irony and linguistic irony
 
 % baseline: negative, control, man, 16-25 
-%modelspec = 'PressedKey ~ Condition + Gender + AgeGroup' ;
 modelspec = ['PressedKey ~ (StemMood * Condition) + StemFreq + Gender + AgeGroup + HourSpent + Hand'] ;
 mdl = fitglm(resultTable,modelspec,'Distribution','binomial')
                 
@@ -147,6 +138,7 @@ mdlN = fitglme(resultTable, ['PressedKey ~ (StemMood * Condition) + StemFreq + G
 %% 3 Dependent Variable - ReactionTime 
 % 3.1 ReactionTime  - Descriptive Statistics
 %% 
+                
 % * Key "J" pressed - think that the stimulus item implies its opposite meaning
 
 % Extract the reaction time values and their condition where Key-0 is opted  
@@ -162,8 +154,8 @@ tbl = struct2table(T);
 
 % Data Summary: Median
 rtMedian0 = groupsummary(tbl, 'Condition','median', 'ReactionTime')
+                
 % Violin Plot - Reaction Time of Pressing "J" on Each Condition
-
 % Data Visualization
 
 %violinplot
@@ -185,6 +177,7 @@ title('Violin plot of Reaction Time of Pressing "J" on Each Condition')
 %set(gca,'FontSize',16); % set font size
 grid on
                 
+%create a boxchart
 %figure;
 %boxchart(categorical(tbl.Condition), tbl.ReactionTime, "Notch","on")
 %ylabel("Reaction time (ms)")
@@ -193,17 +186,17 @@ grid on
 %grid on
 
 % 3.2 ReactionTime  - Inferential Statistics
+
 % Linear Regression
 
 % fit linear regression
 
 testmdl1 = 'ReactionTime ~ (Condition * StemMood) + StemFreq + Gender + AgeGroup + HourSpent + Hand';
-%testmdl1 = 'ReactionTime ~ StemFreq * StemMood * Condition * Gender * AgeGroup + HourSpent';
-%testmdl1 = 'ReactionTime ~ StemFreq + StemMood + Condition + Gender + AgeGroup + HourSpent';
 
 mdl1 = fitlm(resultTable, testmdl1)
+                
 % Mixed-Effect Linear Regression
 
-% mixed-effect linear regression
+% fit mixed-effect linear regression
 mdlNull = fitlme(resultTable,['ReactionTime ~ (Condition * StemMood) + StemFreq + Gender + AgeGroup + HourSpent ' ...
     '+ (1|PartID) + (1|ItemID) + (1+StemFreq|ItemID) + (1+Condition|PartID)'])
